@@ -1,1038 +1,718 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>E-Gamify: SMP Negeri 42 Bandar Lampung</title>
-    <!-- Font Keren -->
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
-    <!-- Ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Animasi -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Gamify SMPN 42 Bandar Lampung</title>
+  <style>
+    /* --- RESET & DASAR --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      /* Background utama menggunakan gradasi modern */
+      background: linear-gradient(135deg, #004e92, #000428);
+      height: 100vh;
+      overflow: hidden;
+      color: #333;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* --- SCREEN STYLING --- */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      overflow: hidden;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 4px solid #fff;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- LOGIN SCREEN --- */
+    .login-screen {
+      padding: 50px 30px;
+      text-align: center;
+      /* Background pola geometris dengan CSS murni */
+      background: radial-gradient(circle at top right, #eef2f3 0%, #8e9eab 100%);
+    }
+
+    .logo-container {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 20px;
+      background: white;
+      border-radius: 50%;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .logo-container img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .login-screen h1 {
+      color: #1a2a6c;
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .login-screen p {
+      color: #555;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .input-group input {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px 25px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 50px;
+      outline: none;
+      transition: 0.3s;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group input:focus {
+      border-color: #1a2a6c;
+      box-shadow: 0 0 15px rgba(26, 42, 108, 0.2);
+    }
+
+    /* --- BUTTONS --- */
+    .btn {
+      padding: 12px 35px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn:active { transform: scale(0.95); }
+
+    .btn-primary {
+      background: linear-gradient(to right, #1a2a6c, #b21f1f);
+    }
+    .btn-secondary {
+      background: linear-gradient(to right, #fdbb2d, #b21f1f);
+    }
+    .btn-success {
+      background: linear-gradient(to right, #11998e, #38ef7d);
+    }
+
+    /* --- MENU SCREEN --- */
+    .menu-header {
+      /* Ganti gambar imgur dengan gradasi warna sekolah */
+      background: linear-gradient(135deg, #005c97, #363795);
+      padding: 30px;
+      color: white;
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+    }
+
+    .user-stats {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      backdrop-filter: blur(5px);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 25px;
+    }
+
+    .menu-card {
+      /* Hapus imgur, ganti desain card bersih */
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .menu-card:hover {
+      background: #fff;
+      border-color: #363795;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .menu-card .icon { font-size: 40px; margin-bottom: 10px; display: block; }
+    .menu-card h3 { color: #333; font-size: 18px; }
+
+    /* --- QUIZ & GAMEPLAY --- */
+    .quiz-screen { padding: 25px; }
     
-    <style>
-        :root {
-            --primary: #2563eb;    /* Biru Sekolah */
-            --secondary: #3b82f6;
-            --accent: #f59e0b;     /* Emas/Kuning Gamifikasi */
-            --success: #10b981;
-            --danger: #ef4444;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.95);
-        }
+    .progress-container {
+      height: 10px;
+      background: #eee;
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #11998e, #38ef7d);
+      width: 0%;
+      transition: 0.5s;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
+    .question-card {
+      background: linear-gradient(135deg, #fff, #f4f4f4);
+      padding: 25px;
+      border-radius: 15px;
+      border-left: 5px solid #1a2a6c;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: #e0e7ff;
-            color: var(--dark);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    .question-text { font-size: 20px; font-weight: 600; color: #2c3e50; }
 
-        /* --- CONTAINER UTAMA --- */
-        #app-container {
-            width: 100%;
-            max-width: 480px;
-            height: 100%;
-            background-color: var(--light);
-            position: relative;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    .answers-grid { display: grid; gap: 10px; }
+    
+    .answer-btn {
+      width: 100%;
+      padding: 15px;
+      text-align: left;
+      background: white;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 16px;
+    }
 
-        @media (min-width: 500px) {
-            #app-container {
-                height: 90vh;
-                max-height: 850px;
-                border-radius: 30px;
-                border: 8px solid #1e293b;
-            }
-        }
+    .answer-btn:hover:not(:disabled) {
+      border-color: #363795;
+      background: #f0f4ff;
+    }
 
-        /* --- SCREENS --- */
-        .screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--light);
-            display: none; /* Default hidden */
-            flex-direction: column;
-            z-index: 10;
-        }
+    .answer-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+    .answer-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
 
-        .screen.active {
-            display: flex;
-            animation: fadeIn 0.5s ease-in-out;
-        }
+    /* --- RESULT & LEVEL --- */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
 
-        /* --- LOGIN SCREEN --- */
-        #login-screen {
-            background: linear-gradient(135deg, var(--primary), #1d4ed8);
-            color: white;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-            text-align: center;
-        }
+    .level-item {
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
 
-        /* Background Particle Effect (CSS Only) */
-        .bg-circles {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            overflow: hidden; z-index: 0;
-        }
-        .circle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.1);
-            animation: float 20s infinite linear;
-        }
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
-            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-        }
+    .level-item.locked { opacity: 0.6; cursor: not-allowed; background: #eee; }
+    .level-item.completed { border-color: #28a745; background: #f0fff4; }
+    .level-item:hover:not(.locked) { transform: scale(1.05); border-color: #1a2a6c; }
 
-        .login-content {
-            z-index: 2;
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    /* --- UTILS --- */
+    .hidden { display: none !important; }
+    .sound-fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+      font-size: 24px;
+    }
 
-        .logo-container {
-            width: 140px;
-            height: 140px;
-            background: white;
-            border-radius: 50%;
-            padding: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            animation: bounceIn 1s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    /* Partikel animasi background */
+    .bg-particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.4;
+      background-image: 
+        radial-gradient(#ffffff 2px, transparent 2px),
+        radial-gradient(#ffffff 2px, transparent 2px);
+      background-size: 50px 50px;
+      background-position: 0 0, 25px 25px;
+    }
 
-        .logo-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        h1 {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 2.2rem;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
-        }
-
-        .input-group {
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            padding: 5px;
-            border-radius: 50px;
-            display: flex;
-            width: 100%;
-            margin-top: 30px;
-            border: 2px solid rgba(255,255,255,0.3);
-            transition: transform 0.3s;
-        }
-
-        .input-group:focus-within {
-            transform: scale(1.05);
-            background: rgba(255,255,255,0.3);
-        }
-
-        input[type="text"] {
-            background: transparent;
-            border: none;
-            color: white;
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.1rem;
-            font-family: 'Fredoka', sans-serif;
-            outline: none;
-        }
-
-        input::placeholder {
-            color: rgba(255,255,255,0.7);
-        }
-
-        .btn-start {
-            background: var(--accent);
-            color: var(--dark);
-            width: 100%;
-            padding: 18px;
-            border-radius: 50px;
-            border: none;
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-top: 20px;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #d97706;
-            transition: all 0.1s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-start:active {
-            transform: translateY(6px);
-            box-shadow: none;
-        }
-
-        /* --- DASHBOARD --- */
-        header {
-            background: var(--primary);
-            color: white;
-            padding: 20px 25px 30px;
-            border-radius: 0 0 35px 35px;
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
-            z-index: 20;
-            position: relative;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .user-pill {
-            display: flex;
-            align-items: center;
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px 5px 5px;
-            border-radius: 30px;
-        }
-
-        .avatar {
-            width: 35px; height: 35px;
-            background: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary);
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        .level-badge {
-            background: var(--accent);
-            color: var(--dark);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 0.85rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            animation: pulse 2s infinite;
-        }
-
-        .xp-wrapper {
-            margin-top: 15px;
-            position: relative;
-        }
-
-        .xp-bar-bg {
-            background: rgba(0,0,0,0.2);
-            height: 12px;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .xp-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #fcd34d, #f59e0b);
-            width: 0%;
-            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 10px;
-        }
-
-        .xp-text {
-            position: absolute;
-            right: 0; top: -20px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        /* --- SCROLL AREA --- */
-        .content-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            padding-bottom: 100px;
-        }
-
-        /* --- CARDS --- */
-        .mission-card {
-            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
-            color: white;
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 25px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(109, 40, 217, 0.3);
-        }
-
-        .mission-card::after {
-            content: '';
-            position: absolute;
-            right: -20px; bottom: -20px;
-            width: 100px; height: 100px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .section-title {
-            font-family: 'Fredoka', sans-serif;
-            font-size: 1.3rem;
-            color: var(--dark);
-        }
-
-        .module-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .module-card {
-            background: white;
-            border-radius: 18px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-            cursor: pointer;
-            border: 2px solid transparent;
-        }
-
-        .module-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-            border-color: var(--primary);
-        }
-
-        .icon-box {
-            width: 55px; height: 55px;
-            border-radius: 15px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            margin-right: 15px;
-            flex-shrink: 0;
-        }
-
-        .module-info h4 { margin: 0; font-size: 1rem; color: var(--dark); }
-        .module-info p { margin: 2px 0 0; font-size: 0.8rem; color: #64748b; }
-
-        /* --- QUIZ UI --- */
-        #quiz-interface {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--light);
-            z-index: 50;
-            display: flex;
-            flex-direction: column;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-
-        #quiz-interface.open {
-            transform: translateY(0);
-        }
-
-        .quiz-header {
-            padding: 20px;
-            background: white;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        .back-btn {
-            font-size: 1.5rem; color: var(--dark);
-            background: none; border: none; cursor: pointer;
-            margin-right: 15px;
-        }
-
-        .quiz-body {
-            flex: 1;
-            overflow-y: auto;
-            padding: 25px;
-        }
-
-        .material-box {
-            background: white;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            line-height: 1.7;
-            font-size: 1rem;
-            color: #334155;
-        }
-        
-        .material-box h3 { color: var(--primary); margin-bottom: 10px; font-family: 'Fredoka'; }
-        .material-box strong { color: var(--dark); }
-
-        .question-box {
-            background: #fff;
-            border-radius: 20px;
-            padding: 20px;
-            border: 2px solid #e2e8f0;
-        }
-
-        .option-btn {
-            width: 100%;
-            padding: 16px;
-            margin-bottom: 12px;
-            border-radius: 12px;
-            border: 2px solid #cbd5e1;
-            background: white;
-            text-align: left;
-            font-size: 1rem;
-            color: var(--dark);
-            font-weight: 600;
-            transition: all 0.2s;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .option-btn:active { transform: scale(0.98); }
-
-        .option-btn.correct {
-            background: #d1fae5; border-color: var(--success); color: #065f46;
-        }
-        .option-btn.correct::after {
-            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
-            position: absolute; right: 20px;
-        }
-
-        .option-btn.wrong {
-            background: #fee2e2; border-color: var(--danger); color: #991b1b;
-            animation: shake 0.5s;
-        }
-
-        /* --- BOTTOM NAV --- */
-        .bottom-nav {
-            position: absolute; bottom: 0; width: 100%;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around;
-            padding: 15px;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            z-index: 30;
-        }
-
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center;
-            color: #94a3b8; cursor: pointer; transition: 0.3s;
-        }
-        .nav-item.active { color: var(--primary); transform: translateY(-5px); }
-        .nav-item i { font-size: 1.4rem; margin-bottom: 5px; }
-        .nav-item span { font-size: 0.7rem; font-weight: 700; }
-
-        /* --- MODAL REWARD --- */
-        #modal-overlay {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 100;
-            display: flex; justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s;
-        }
-        #modal-overlay.show { opacity: 1; pointer-events: all; }
-
-        .reward-card {
-            background: white; width: 85%; max-width: 320px;
-            border-radius: 30px; padding: 30px;
-            text-align: center;
-            transform: scale(0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #modal-overlay.show .reward-card { transform: scale(1); }
-
-        .star-spin { font-size: 5rem; color: var(--accent); animation: spin 3s infinite linear; margin-bottom: 10px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-
-        /* --- LEADERBOARD --- */
-        .rank-item {
-            display: flex; align-items: center;
-            background: white; padding: 15px;
-            border-radius: 15px; margin-bottom: 10px;
-            border-bottom: 3px solid #f1f5f9;
-        }
-        .rank-num { font-size: 1.2rem; font-weight: 900; color: #94a3b8; width: 30px; }
-        .rank-1 { color: #eab308; } 
-        .rank-2 { color: #94a3b8; }
-        .rank-3 { color: #b45309; }
-
-    </style>
+    /* Responsif */
+    @media (max-width: 600px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .login-screen h1 { font-size: 24px; }
+    }
+  </style>
 </head>
 <body>
 
-    <div id="app-container">
+  <div class="bg-particles"></div>
+
+  <div class="container">
+    
+    <div id="screen-login" class="screen active">
+      <div class="login-screen">
+        <div class="logo-container">
+          <img src="logo.png" alt="Logo SMPN 42" onerror="this.src='https://via.placeholder.com/150/1a2a6c/FFFFFF?text=SMPN+42'">
+        </div>
+        <h1>E-Gamify SMPN 42</h1>
+        <p>Petualangan Mencari Harta Karun Pengetahuan</p>
         
-        <!-- === AUDIO SYSTEM (INVISIBLE) === -->
-        <!-- Tidak perlu tag audio, kita pakai JS Web Audio API -->
-
-        <!-- === LAYAR LOGIN === -->
-        <div id="login-screen" class="screen active">
-            <div class="bg-circles">
-                <div class="circle" style="width: 100px; height: 100px; left: 10%; bottom: 20%;"></div>
-                <div class="circle" style="width: 200px; height: 200px; right: -50px; top: 10%;"></div>
-                <div class="circle" style="width: 50px; height: 50px; left: 50%; top: 50%;"></div>
-            </div>
-
-            <div class="login-content">
-                <div class="logo-container animate__animated animate__bounceIn">
-                    <!-- Gunakan logo.png yang Anda upload -->
-                    <img src="logo.png" alt="Logo SMPN 42" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3413/3413535.png'">
-                </div>
-                <h1 class="animate__animated animate__fadeInDown animate__delay-1s">E-Gamify</h1>
-                <p style="opacity: 0.9; font-size: 1.1rem; margin-bottom: 10px;">SMP Negeri 42 Bandar Lampung</p>
-                <div style="font-size: 0.9rem; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">
-                    Edisi Kelas 9 - Wawasan Luas
-                </div>
-
-                <div class="input-group animate__animated animate__fadeInUp animate__delay-1s">
-                    <input type="text" id="username" placeholder="Siapa namamu?" autocomplete="off">
-                </div>
-
-                <button class="btn-start animate__animated animate__fadeInUp animate__delay-2s" onclick="handleLogin()">
-                    MULAI BELAJAR <i class="fas fa-rocket" style="margin-left: 10px;"></i>
-                </button>
-            </div>
-            
-            <p style="position: absolute; bottom: 20px; font-size: 0.7rem; opacity: 0.6;">© 2025 PKM-PM Tim E-Gamify</p>
-        </div>
-
-        <!-- === LAYAR UTAMA (HOME) === -->
-        <div id="home-screen" class="screen">
-            <header>
-                <div class="header-top">
-                    <div class="user-pill">
-                        <div class="avatar" id="avatar-initial">A</div>
-                        <div style="display: flex; flex-direction: column;">
-                            <span id="display-name" style="font-size: 0.9rem; font-weight: 700;">User</span>
-                            <span style="font-size: 0.7rem; opacity: 0.8;">Siswa Teladan</span>
-                        </div>
-                    </div>
-                    <div class="level-badge" id="level-display">Level 1</div>
-                </div>
-                <div class="xp-wrapper">
-                    <div class="xp-text"><span id="xp-current">0</span> / <span id="xp-max">100</span> XP</div>
-                    <div class="xp-bar-bg">
-                        <div class="xp-fill" id="xp-fill"></div>
-                    </div>
-                </div>
-            </header>
-
-            <div class="content-scroll" id="main-scroll">
-                <!-- Tab: Belajar -->
-                <div id="tab-learn" class="tab-content">
-                    <div class="mission-card animate__animated animate__pulse animate__infinite animate__slower">
-                        <h3 style="font-family: 'Fredoka'">Misi Harian</h3>
-                        <p style="font-size: 0.9rem; margin-top: 5px; opacity: 0.9;">
-                            Selesaikan modul <b>"Bioteknologi"</b> untuk mendapatkan +50 Bonus XP hari ini!
-                        </p>
-                    </div>
-
-                    <div class="section-header">
-                        <div class="section-title">Peta Belajar</div>
-                        <i class="fas fa-map-marked-alt" style="color: var(--primary)"></i>
-                    </div>
-
-                    <div class="module-grid" id="module-container">
-                        <!-- Modul di-generate JS -->
-                    </div>
-                </div>
-
-                <!-- Tab: Leaderboard -->
-                <div id="tab-rank" class="tab-content" style="display: none;">
-                    <div class="section-header">
-                        <div class="section-title">Top Siswa Kelas 9</div>
-                        <i class="fas fa-trophy" style="color: var(--accent)"></i>
-                    </div>
-                    <div id="leaderboard-container"></div>
-                </div>
-
-                <!-- Tab: Badges -->
-                <div id="tab-badges" class="tab-content" style="display: none;">
-                    <div class="section-header">
-                        <div class="section-title">Koleksi Lencana</div>
-                        <i class="fas fa-medal" style="color: var(--danger)"></i>
-                    </div>
-                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;" id="badge-container"></div>
-                </div>
-            </div>
-
-            <!-- Navigasi Bawah -->
-            <nav class="bottom-nav">
-                <div class="nav-item active" onclick="switchTab('learn', this)">
-                    <i class="fas fa-book-open"></i> <span>Belajar</span>
-                </div>
-                <div class="nav-item" onclick="switchTab('rank', this)">
-                    <i class="fas fa-chart-bar"></i> <span>Peringkat</span>
-                </div>
-                <div class="nav-item" onclick="switchTab('badges', this)">
-                    <i class="fas fa-award"></i> <span>Prestasi</span>
-                </div>
-            </nav>
-        </div>
-
-        <!-- === INTERFACE KUIS (SLIDE UP) === -->
-        <div id="quiz-interface">
-            <div class="quiz-header">
-                <button class="back-btn" onclick="closeQuiz()"><i class="fas fa-arrow-left"></i></button>
-                <h3 id="quiz-title" style="font-family: 'Fredoka'; flex: 1; text-align: center; margin-right: 30px;">Judul Kuis</h3>
-            </div>
-            <div class="quiz-body">
-                <div class="material-box animate__animated animate__fadeInUp">
-                    <div id="quiz-material">
-                        <!-- Konten Materi -->
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin: 20px 0; font-weight: bold; color: #94a3b8;">--- TANTANGAN KUIS ---</div>
-
-                <div class="question-box animate__animated animate__fadeInUp animate__delay-1s">
-                    <p id="quiz-question" style="font-size: 1.1rem; font-weight: bold; margin-bottom: 20px;">Pertanyaan?</p>
-                    <div id="quiz-options">
-                        <!-- Opsi Jawaban -->
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- === MODAL REWARD === -->
-        <div id="modal-overlay">
-            <div class="reward-card">
-                <i class="fas fa-star star-spin"></i>
-                <h2 style="font-family: 'Fredoka'; color: var(--dark); margin-bottom: 5px;">Luar Biasa!</h2>
-                <p id="reward-msg" style="color: #64748b; margin-bottom: 20px;">Jawabanmu Tepat Sekali</p>
-                <div style="background: #fef3c7; color: #d97706; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 1.2rem; margin-bottom: 20px;">
-                    +<span id="reward-xp-val">50</span> XP
-                </div>
-                <button class="btn-start" style="padding: 12px; font-size: 1rem;" onclick="closeReward()">Lanjut</button>
-            </div>
-        </div>
-
+        <form id="loginForm">
+          <div class="input-group">
+            <input type="text" id="username" placeholder="Masukkan Nama Lengkap" required autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary">MULAI PETUALANGAN ▶</button>
+        </form>
+      </div>
     </div>
 
-    <script>
-        // --- SOUND SYSTEM (Synthesizer Sederhana) ---
-        // Kita gunakan Web Audio API agar tidak perlu load file eksternal yang berat/rusak
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    <div id="screen-menu" class="screen">
+      <div class="menu-header">
+        <h2>Halo, <span id="display-name">Siswa</span>! 👋</h2>
+        <div class="user-stats">
+          <div class="stat-badge">⭐ Skor: <span id="display-score">0</span></div>
+          <div class="stat-badge">🏆 Level: <span id="display-level">1</span></div>
+        </div>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="app.showScreen('map')">
+          <span class="icon">🗺️</span>
+          <h3>Peta Level</h3>
+        </div>
+        <div class="menu-card" onclick="app.showLeaderboard()">
+          <span class="icon">👑</span>
+          <h3>Peringkat</h3>
+        </div>
+        <div class="menu-card" onclick="app.showProfile()">
+          <span class="icon">👤</span>
+          <h3>Profil Saya</h3>
+        </div>
+        <div class="menu-card" onclick="location.reload()">
+          <span class="icon">🚪</span>
+          <h3>Keluar</h3>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-map" class="screen">
+      <div class="menu-header" style="background: linear-gradient(135deg, #fdbb2d, #b21f1f);">
+        <h2>Peta Petualangan 🗺️</h2>
+        <p>Pilih level untuk memulai</p>
+      </div>
+      <div class="level-grid" id="level-container">
+        </div>
+      <div style="padding: 20px; text-align: center;">
+        <button class="btn btn-secondary" onclick="app.showScreen('menu')">⬅ KEMBALI</button>
+      </div>
+    </div>
+
+    <div id="screen-quiz" class="screen">
+      <div style="padding: 20px; border-bottom: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #1a2a6c;">Level <span id="quiz-level-num">1</span></span>
+        <span style="font-weight: bold; color: #b21f1f;">Skor: <span id="quiz-score">0</span></span>
+      </div>
+      <div class="quiz-screen">
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="question-card">
+          <p class="question-text" id="question-text">Loading...</p>
+        </div>
+        <div class="answers-grid" id="answers-container">
+          </div>
+      </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+      <div class="login-screen">
+        <div style="font-size: 60px; margin-bottom: 10px;" id="result-icon">🏆</div>
+        <h1 id="result-title">Level Selesai!</h1>
+        <p>Kamu mendapatkan <strong id="result-points">0</strong> Poin</p>
         
-        const SoundFX = {
-            playTone: (freq, type, duration) => {
-                if(audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            },
-            click: () => SoundFX.playTone(600, 'sine', 0.1),
-            correct: () => {
-                SoundFX.playTone(600, 'sine', 0.1);
-                setTimeout(() => SoundFX.playTone(1200, 'sine', 0.3), 100);
-            },
-            wrong: () => {
-                SoundFX.playTone(150, 'sawtooth', 0.4);
-            },
-            levelUp: () => {
-                let speed = 100;
-                [523, 659, 783, 1046].forEach((f, i) => {
-                    setTimeout(() => SoundFX.playTone(f, 'square', 0.2), i * speed);
-                });
-            }
-        };
+        <div style="margin: 30px 0;">
+          <button class="btn btn-success" id="next-level-btn" onclick="app.nextLevel()">LEVEL SELANJUTNYA ➡</button>
+          <div style="height: 10px;"></div>
+          <button class="btn btn-secondary" onclick="app.showScreen('map')">KEMBALI KE PETA</button>
+        </div>
+      </div>
+    </div>
 
-        // --- DATABASE MATERI KELAS 9 ---
-        const gameData = [
-            {
-                id: 1,
-                title: "Bioteknologi",
-                icon: "fa-dna",
-                color: "#8b5cf6",
-                category: "IPA",
-                material: `
-                    <h3>Pemanfaatan Mikroorganisme</h3>
-                    <p>Bioteknologi konvensional memanfaatkan mikroorganisme secara langsung. Contoh populernya adalah <strong>Tempe</strong>.</p>
-                    <p>Tempe dibuat dari fermentasi kedelai menggunakan jamur <em>Rhizopus oryzae</em>. Jamur ini membentuk benang-benang hifa yang mengikat biji kedelai menjadi padat.</p>
-                `,
-                question: "Mikroorganisme apa yang berperan dalam pembuatan tempe?",
-                options: ["Lactobacillus bulgaricus", "Rhizopus oryzae", "Saccharomyces cerevisiae", "Acetobacter xylinum"],
-                answer: 1,
-                xp: 50
-            },
-            {
-                id: 2,
-                title: "Perubahan Sosial",
-                icon: "fa-users",
-                color: "#f59e0b",
-                category: "IPS",
-                material: `
-                    <h3>Perubahan Sosial Budaya</h3>
-                    <p>Perubahan sosial budaya adalah perubahan pada kehidupan masyarakat yang meliputi perubahan nilai-nilai dan tata cara kehidupan dari tradisional menjadi modern.</p>
-                    <p><strong>Evolusi</strong> adalah perubahan yang terjadi secara lambat dan dalam waktu yang lama, contohnya perubahan masyarakat berburu menjadi bertani.</p>
-                `,
-                question: "Perubahan sosial yang terjadi secara lambat dan bertahap disebut...",
-                options: ["Revolusi", "Evolusi", "Asimilasi", "Globalisasi"],
-                answer: 1,
-                xp: 40
-            },
-            {
-                id: 3,
-                title: "Listrik Dinamis",
-                icon: "fa-bolt",
-                color: "#eab308",
-                category: "Fisika",
-                material: `
-                    <h3>Hukum Ohm</h3>
-                    <p>Kuat arus listrik yang mengalir pada suatu penghantar sebanding dengan beda potensial dan berbanding terbalik dengan hambatan.</p>
-                    <p>Rumus: <strong>V = I x R</strong></p>
-                    <p>Dimana V = Tegangan (Volt), I = Arus (Ampere), R = Hambatan (Ohm).</p>
-                `,
-                question: "Jika hambatan (R) diperbesar sedangkan tegangan (V) tetap, maka arus listrik (I) akan...",
-                options: ["Makin Besar", "Makin Kecil", "Tetap", "Menjadi Nol"],
-                answer: 1,
-                xp: 60
-            },
-            {
-                id: 4,
-                title: "Bangun Ruang",
-                icon: "fa-cube",
-                color: "#3b82f6",
-                category: "Matematika",
-                material: `
-                    <h3>Bola</h3>
-                    <p>Bola adalah bangun ruang sisi lengkung yang dibentuk oleh tak hingga lingkaran dengan jari-jari yang sama.</p>
-                    <p>Rumus Luas Permukaan Bola: <strong>L = 4 x π x r²</strong></p>
-                `,
-                question: "Berapa rumus luas permukaan bola?",
-                options: ["4/3 π r³", "2 π r (r + t)", "4 π r²", "π r²"],
-                answer: 2,
-                xp: 70
-            },
-            {
-                id: 5,
-                title: "Profil SMPN 42",
-                icon: "fa-school",
-                color: "#ef4444",
-                category: "Umum",
-                material: `
-                    <h3>Mengenal Sekolah Kita</h3>
-                    <p>SMP Negeri 42 Bandar Lampung terletak di kawasan pesisir, tepatnya di <strong>Jl. Raya Pulau Pasaran</strong>.</p>
-                    <p>Sekolah ini mengedepankan teknologi dan gamifikasi (seperti aplikasi ini) untuk membuat siswa semangat belajar!</p>
-                `,
-                question: "Dimana lokasi SMP Negeri 42 Bandar Lampung?",
-                options: ["Jl. ZA Pagar Alam", "Jl. Raya Pulau Pasaran", "Jl. Kartini", "Jl. Antasari"],
-                answer: 1,
-                xp: 30
-            }
+    <div id="screen-leaderboard" class="screen">
+      <div class="menu-header" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+        <h2>Papan Peringkat 🏆</h2>
+      </div>
+      <div style="padding: 20px;" id="leaderboard-list">
+        </div>
+      <div style="text-align: center; padding-bottom: 20px;">
+        <button class="btn btn-secondary" onclick="app.showScreen('menu')">⬅ KEMBALI</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sound-fab" onclick="audioManager.toggle()">
+    <span id="sound-icon">🔊</span>
+  </div>
+
+  <audio id="bgm" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=fun-life-112188.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-correct">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3?filename=correct-6033.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-wrong">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_c6ccf3232f.mp3?filename=negative-beeps-6008.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-win">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3?filename=success-1-6297.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // --- DATABASE SOAL (CONTOH) ---
+    const questionsDB = [
+      // Level 1
+      [
+        { q: "Hasil dari 5 x 5 adalah?", a: ["10", "20", "25", "55"], c: 2 },
+        { q: "Ibu kota Indonesia yang baru berada di pulau?", a: ["Jawa", "Sumatera", "Kalimantan", "Sulawesi"], c: 2 },
+        { q: "Warna bendera Indonesia adalah?", a: ["Merah Biru", "Merah Putih", "Putih Merah", "Merah Kuning"], c: 1 },
+      ],
+      // Level 2
+      [
+        { q: "Apa bahasa Inggris dari 'Buku'?", a: ["Book", "Pen", "Bag", "Table"], c: 0 },
+        { q: "Hewan yang memiliki belalai adalah?", a: ["Singa", "Ular", "Gajah", "Jerapah"], c: 2 },
+        { q: "30 dibagi 2 sama dengan?", a: ["10", "15", "12", "14"], c: 1 },
+      ],
+      // Level 3 (Dummy untuk demo)
+      [
+        { q: "Lambang sila pertama Pancasila?", a: ["Bintang", "Rantai", "Pohon Beringin", "Padi Kapas"], c: 0 },
+        { q: "Lagu kebangsaan Indonesia?", a: ["Tanah Airku", "Indonesia Raya", "Bagimu Negeri", "Garuda Pancasila"], c: 1 },
+      ]
+    ];
+
+    // --- AUDIO MANAGER ---
+    const audioManager = {
+      enabled: true,
+      bgm: document.getElementById('bgm'),
+      
+      init() {
+        this.bgm.volume = 0.3;
+      },
+      
+      playBGM() {
+        if(this.enabled) {
+          this.bgm.play().catch(e => console.log("Menunggu interaksi user untuk play audio"));
+        }
+      },
+      
+      playSFX(id) {
+        if(this.enabled) {
+          const sfx = document.getElementById(id);
+          sfx.currentTime = 0;
+          sfx.play();
+        }
+      },
+
+      toggle() {
+        this.enabled = !this.enabled;
+        document.getElementById('sound-icon').innerText = this.enabled ? '🔊' : '🔇';
+        if(this.enabled) this.bgm.play();
+        else this.bgm.pause();
+      }
+    };
+
+    // --- APP LOGIC ---
+    const app = {
+      user: {
+        name: '',
+        score: 0,
+        level: 1,
+        unlockedLevel: 1
+      },
+      currentQuiz: {
+        levelIndex: 0,
+        questionIndex: 0,
+        scoreTemp: 0
+      },
+
+      init() {
+        // Load data if exists
+        const saved = localStorage.getItem('egamify_user');
+        if(saved) {
+          this.user = JSON.parse(saved);
+        }
+        
+        // Handle Login
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('username').value;
+          if(name) {
+            this.user.name = name;
+            this.save();
+            this.updateUI();
+            
+            // Audio dimulai SETELAH interaksi user (klik tombol)
+            audioManager.init();
+            audioManager.playBGM();
+            audioManager.playSFX('sfx-win'); // Suara 'bling' saat masuk
+            
+            this.showScreen('menu');
+          }
+        });
+      },
+
+      save() {
+        localStorage.setItem('egamify_user', JSON.stringify(this.user));
+      },
+
+      showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + id).classList.add('active');
+        
+        if(id === 'map') this.renderMap();
+        if(id === 'menu') this.updateUI();
+      },
+
+      updateUI() {
+        document.getElementById('display-name').innerText = this.user.name;
+        document.getElementById('display-score').innerText = this.user.score;
+        document.getElementById('display-level').innerText = this.user.unlockedLevel;
+      },
+
+      // --- MAP SYSTEM ---
+      renderMap() {
+        const container = document.getElementById('level-container');
+        container.innerHTML = '';
+        
+        // Buat 10 Level (contoh)
+        for(let i = 1; i <= 10; i++) {
+          const el = document.createElement('div');
+          el.className = `level-item ${i > this.user.unlockedLevel ? 'locked' : ''} ${i < this.user.unlockedLevel ? 'completed' : ''}`;
+          
+          let icon = '🔒';
+          let status = 'Terkunci';
+          
+          if(i < this.user.unlockedLevel) { icon = '✅'; status = 'Selesai'; }
+          else if(i === this.user.unlockedLevel) { icon = '▶'; status = 'Mulai'; }
+
+          el.innerHTML = `
+            <div style="font-size:30px; margin-bottom:5px;">${icon}</div>
+            <strong>Level ${i}</strong>
+            <div style="font-size:12px; color:#666;">${status}</div>
+          `;
+          
+          if(i <= this.user.unlockedLevel) {
+            el.onclick = () => this.startLevel(i);
+          }
+          
+          container.appendChild(el);
+        }
+      },
+
+      // --- QUIZ SYSTEM ---
+      startLevel(lvl) {
+        // Cek jika soal ada
+        if(lvl > questionsDB.length) {
+          alert("Soal untuk level ini sedang disusun!");
+          return;
+        }
+
+        this.currentQuiz = {
+          levelIndex: lvl - 1,
+          questionIndex: 0,
+          scoreTemp: 0
+        };
+        
+        document.getElementById('quiz-level-num').innerText = lvl;
+        document.getElementById('quiz-score').innerText = this.user.score;
+        this.showScreen('quiz');
+        this.renderQuestion();
+      },
+
+      renderQuestion() {
+        const qData = questionsDB[this.currentQuiz.levelIndex][this.currentQuiz.questionIndex];
+        
+        // Progress bar
+        const totalQ = questionsDB[this.currentQuiz.levelIndex].length;
+        const progress = (this.currentQuiz.questionIndex / totalQ) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        // Render Text
+        document.getElementById('question-text').innerText = qData.q;
+        
+        // Render Answers
+        const ansContainer = document.getElementById('answers-container');
+        ansContainer.innerHTML = '';
+        
+        qData.a.forEach((ans, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'answer-btn';
+          btn.innerText = ans;
+          btn.onclick = () => this.checkAnswer(idx, qData.c, btn);
+          ansContainer.appendChild(btn);
+        });
+      },
+
+      checkAnswer(selectedIdx, correctIdx, btnElement) {
+        // Disable all buttons
+        const btns = document.querySelectorAll('.answer-btn');
+        btns.forEach(b => b.disabled = true);
+
+        if(selectedIdx === correctIdx) {
+          btnElement.classList.add('correct');
+          audioManager.playSFX('sfx-correct');
+          this.currentQuiz.scoreTemp += 10;
+        } else {
+          btnElement.classList.add('wrong');
+          audioManager.playSFX('sfx-wrong');
+          btns[correctIdx].classList.add('correct'); // Show correct one
+        }
+
+        // Delay next question
+        setTimeout(() => {
+          this.currentQuiz.questionIndex++;
+          const totalQ = questionsDB[this.currentQuiz.levelIndex].length;
+          
+          if(this.currentQuiz.questionIndex < totalQ) {
+            this.renderQuestion();
+          } else {
+            this.finishLevel();
+          }
+        }, 1500);
+      },
+
+      finishLevel() {
+        this.user.score += this.currentQuiz.scoreTemp;
+        
+        // Unlock next level logic
+        const currentLvl = this.currentQuiz.levelIndex + 1;
+        if(currentLvl === this.user.unlockedLevel) {
+          this.user.unlockedLevel++;
+        }
+        
+        this.save();
+        audioManager.playSFX('sfx-win');
+        
+        // Show result
+        document.getElementById('result-points').innerText = this.currentQuiz.scoreTemp;
+        
+        // Hide next button if max level
+        if(this.user.unlockedLevel > questionsDB.length) {
+          document.getElementById('next-level-btn').style.display = 'none';
+          document.getElementById('result-title').innerText = "Game Tamat! 🎉";
+        } else {
+          document.getElementById('next-level-btn').style.display = 'inline-block';
+        }
+
+        this.showScreen('result');
+      },
+
+      nextLevel() {
+        this.startLevel(this.user.unlockedLevel);
+      },
+
+      // --- LEADERBOARD (Local Mockup) ---
+      showLeaderboard() {
+        const list = document.getElementById('leaderboard-list');
+        // Simulasi data dummy + user saat ini
+        const data = [
+          { name: "Andi (Juara 1)", score: 500 },
+          { name: "Budi", score: 450 },
+          { name: this.user.name + " (Kamu)", score: this.user.score },
+          { name: "Citra", score: 200 }
         ];
+        
+        // Sort descending
+        data.sort((a,b) => b.score - a.score);
 
-        // --- STATE GAME ---
-        let player = {
-            name: "",
-            level: 1,
-            xp: 0,
-            maxXP: 100,
-            completed: []
-        };
-        let activeQuiz = null;
+        list.innerHTML = data.map((d, i) => `
+          <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; margin-bottom:10px; border-radius:10px; border:1px solid #eee;">
+            <span>#${i+1} <strong>${d.name}</strong></span>
+            <span style="color:#1a2a6c; font-weight:bold;">${d.score} Poin</span>
+          </div>
+        `).join('');
+        
+        this.showScreen('leaderboard');
+      },
 
-        // --- FUNGSI UTAMA ---
+      showProfile() {
+        alert(`Nama: ${this.user.name}\nTotal Skor: ${this.user.score}\nLevel Terbuka: ${this.user.unlockedLevel}`);
+      }
+    };
 
-        function handleLogin() {
-            SoundFX.click();
-            const input = document.getElementById('username');
-            const name = input.value.trim();
-
-            if (!name) {
-                // Animasi getar jika kosong
-                input.parentElement.classList.add('animate__animated', 'animate__shakeX');
-                setTimeout(() => input.parentElement.classList.remove('animate__animated', 'animate__shakeX'), 500);
-                return;
-            }
-
-            player.name = name;
-            
-            // Update UI
-            document.getElementById('display-name').innerText = name;
-            document.getElementById('avatar-initial').innerText = name.charAt(0).toUpperCase();
-
-            // Transisi Layar
-            const loginScreen = document.getElementById('login-screen');
-            const homeScreen = document.getElementById('home-screen');
-
-            loginScreen.classList.remove('animate__fadeInDown');
-            loginScreen.classList.add('animate__fadeOutUp');
-
-            setTimeout(() => {
-                loginScreen.style.display = 'none';
-                loginScreen.classList.remove('active');
-                
-                homeScreen.style.display = 'flex';
-                setTimeout(() => homeScreen.classList.add('active'), 50);
-                
-                initGame();
-                SoundFX.levelUp(); // Suara welcome
-            }, 500);
-        }
-
-        function initGame() {
-            renderModules();
-            renderLeaderboard();
-            renderBadges();
-        }
-
-        function renderModules() {
-            const container = document.getElementById('module-container');
-            container.innerHTML = '';
-
-            gameData.forEach(item => {
-                const isDone = player.completed.includes(item.id);
-                const status = isDone ? '<i class="fas fa-check-circle" style="color:var(--success)"></i>' : '<i class="fas fa-chevron-right" style="opacity:0.3"></i>';
-                const opacity = isDone ? '0.7' : '1';
-
-                const card = document.createElement('div');
-                card.className = 'module-card';
-                card.style.opacity = opacity;
-                card.onclick = () => openQuiz(item);
-
-                card.innerHTML = `
-                    <div class="icon-box" style="background:${item.color}">
-                        <i class="fas ${item.icon}"></i>
-                    </div>
-                    <div class="module-info" style="flex:1">
-                        <h4>${item.title}</h4>
-                        <p>${item.category} • ${item.xp} XP</p>
-                    </div>
-                    <div style="font-size:1.2rem">${status}</div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function openQuiz(data) {
-            SoundFX.click();
-            if (player.completed.includes(data.id)) {
-                alert("Kamu sudah menyelesaikan modul ini! Hebat!");
-                return;
-            }
-
-            activeQuiz = data;
-            
-            // Isi Konten
-            document.getElementById('quiz-title').innerText = data.title;
-            document.getElementById('quiz-material').innerHTML = data.material;
-            document.getElementById('quiz-question').innerText = data.question;
-
-            const optsDiv = document.getElementById('quiz-options');
-            optsDiv.innerHTML = '';
-
-            data.options.forEach((opt, idx) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(idx, btn);
-                optsDiv.appendChild(btn);
-            });
-
-            document.getElementById('quiz-interface').classList.add('open');
-        }
-
-        function closeQuiz() {
-            SoundFX.click();
-            document.getElementById('quiz-interface').classList.remove('open');
-        }
-
-        function checkAnswer(idx, btn) {
-            // Disable all buttons
-            const allBtns = document.querySelectorAll('.option-btn');
-            allBtns.forEach(b => b.disabled = true);
-
-            if (idx === activeQuiz.answer) {
-                // BENAR
-                SoundFX.correct();
-                btn.classList.add('correct');
-                
-                setTimeout(() => {
-                    closeQuiz();
-                    showReward(activeQuiz.xp);
-                    player.completed.push(activeQuiz.id);
-                    renderModules();
-                }, 1000);
-            } else {
-                // SALAH
-                SoundFX.wrong();
-                btn.classList.add('wrong');
-                setTimeout(() => {
-                    // Reset buttons
-                    allBtns.forEach(b => {
-                        b.disabled = false;
-                        b.classList.remove('wrong');
-                    });
-                }, 1000);
-            }
-        }
-
-        function showReward(xp) {
-            const modal = document.getElementById('modal-overlay');
-            const xpText = document.getElementById('reward-xp-val');
-            
-            xpText.innerText = xp;
-            modal.classList.add('show');
-            SoundFX.levelUp();
-
-            // Add XP Logic
-            addXP(xp);
-        }
-
-        function closeReward() {
-            SoundFX.click();
-            document.getElementById('modal-overlay').classList.remove('show');
-        }
-
-        function addXP(amount) {
-            let current = player.xp;
-            let target = current + amount;
-            
-            // Animasi bar sederhana
-            const interval = setInterval(() => {
-                if (current >= target) {
-                    clearInterval(interval);
-                    player.xp = target;
-                    checkLevelUp();
-                } else {
-                    current++;
-                    updateXPBar(current);
-                }
-            }, 20);
-        }
-
-        function updateXPBar(val) {
-            const pct = (val / player.maxXP) * 100;
-            document.getElementById('xp-fill').style.width = pct + '%';
-            document.getElementById('xp-current').innerText = Math.floor(val);
-            document.getElementById('xp-max').innerText = player.maxXP;
-        }
-
-        function checkLevelUp() {
-            if (player.xp >= player.maxXP) {
-                player.level++;
-                player.xp = player.xp - player.maxXP;
-                player.maxXP = Math.floor(player.maxXP * 1.5);
-                
-                document.getElementById('level-display').innerText = "Level " + player.level;
-                updateXPBar(player.xp);
-                
-                // Efek visual level up (bisa ditambah nanti)
-                alert(`🎉 LEVEL UP! Kamu sekarang Level ${player.level}`);
-            }
-        }
-
-        // --- SISTEM TAB & NAVIGASI ---
-        function switchTab(tabName, el) {
-            SoundFX.click();
-            
-            // UI Nav
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-
-            // Show target
-            const target = document.getElementById('tab-' + tabName);
-            target.style.display = 'block';
-            target.classList.add('animate__animated', 'animate__fadeIn');
-        }
-
-        function renderLeaderboard() {
-            const box = document.getElementById('leaderboard-container');
-            const names = ["Citra Lestari", "Budi Santoso", "Dewi Putri", "Rizky Pratama", "Siti Aminah"];
-            
-            let html = '';
-            names.forEach((n, i) => {
-                let rankClass = i === 0 ? 'rank-1' : (i === 1 ? 'rank-2' : (i === 2 ? 'rank-3' : ''));
-                let icon = i < 3 ? '<i class="fas fa-crown"></i>' : '#' + (i+1);
-                
-                html += `
-                <div class="rank-item">
-                    <div class="rank-num ${rankClass}">${icon}</div>
-                    <div style="flex:1; font-weight:bold; color:#334155;">${n}</div>
-                    <div style="color:var(--accent); font-weight:bold;">${1200 - (i*150)} XP</div>
-                </div>`;
-            });
-            // Tambahkan player sendiri di bawah (simulasi)
-            html += `
-                <div class="rank-item" style="border: 2px solid var(--primary); background: #eff6ff;">
-                    <div class="rank-num">#99</div>
-                    <div style="flex:1; font-weight:bold; color:var(--primary);">KAMU</div>
-                    <div style="color:var(--accent); font-weight:bold;">${player.xp} XP</div>
-                </div>
-            `;
-            box.innerHTML = html;
-        }
-
-        function renderBadges() {
-            const box = document.getElementById('badge-container');
-            const badges = [
-                {icon: 'fa-rocket', name: 'Pemula', color: '#94a3b8'},
-                {icon: 'fa-brain', name: 'Cerdas', color: '#f59e0b'},
-                {icon: 'fa-flask', name: 'Ilmuwan', color: '#8b5cf6'},
-                {icon: 'fa-globe-asia', name: 'Explorer', color: '#10b981'},
-            ];
-
-            let html = '';
-            badges.forEach(b => {
-                html += `
-                    <div style="text-align:center; opacity: 0.5; filter: grayscale(1);">
-                        <div style="width:60px; height:60px; background:${b.color}; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; color:white; font-size:1.5rem; margin-bottom:5px;">
-                            <i class="fas ${b.icon}"></i>
-                        </div>
-                        <div style="font-size:0.7rem; font-weight:bold;">${b.name}</div>
-                    </div>
-                `;
-            });
-            box.innerHTML = html;
-        }
-    </script>
+    // Start App
+    app.init();
+  </script>
 </body>
 </html>
