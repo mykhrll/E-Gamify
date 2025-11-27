@@ -1,0 +1,718 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>E-Gamify SMPN 42 Bandar Lampung</title>
+  <style>
+    /* --- RESET & DASAR --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      /* Background utama menggunakan gradasi modern */
+      background: linear-gradient(135deg, #004e92, #000428);
+      height: 100vh;
+      overflow: hidden;
+      color: #333;
+    }
+
+    .container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    /* --- SCREEN STYLING --- */
+    .screen {
+      display: none;
+      width: 100%;
+      max-width: 800px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 25px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      overflow: hidden;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      max-height: 90vh;
+      overflow-y: auto;
+      border: 4px solid #fff;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- LOGIN SCREEN --- */
+    .login-screen {
+      padding: 50px 30px;
+      text-align: center;
+      /* Background pola geometris dengan CSS murni */
+      background: radial-gradient(circle at top right, #eef2f3 0%, #8e9eab 100%);
+    }
+
+    .logo-container {
+      width: 150px;
+      height: 150px;
+      margin: 0 auto 20px;
+      background: white;
+      border-radius: 50%;
+      padding: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .logo-container img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .login-screen h1 {
+      color: #1a2a6c;
+      font-size: 32px;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .login-screen p {
+      color: #555;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .input-group input {
+      width: 100%;
+      max-width: 400px;
+      padding: 15px 25px;
+      font-size: 16px;
+      border: 2px solid #ddd;
+      border-radius: 50px;
+      outline: none;
+      transition: 0.3s;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .input-group input:focus {
+      border-color: #1a2a6c;
+      box-shadow: 0 0 15px rgba(26, 42, 108, 0.2);
+    }
+
+    /* --- BUTTONS --- */
+    .btn {
+      padding: 12px 35px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn:active { transform: scale(0.95); }
+
+    .btn-primary {
+      background: linear-gradient(to right, #1a2a6c, #b21f1f);
+    }
+    .btn-secondary {
+      background: linear-gradient(to right, #fdbb2d, #b21f1f);
+    }
+    .btn-success {
+      background: linear-gradient(to right, #11998e, #38ef7d);
+    }
+
+    /* --- MENU SCREEN --- */
+    .menu-header {
+      /* Ganti gambar imgur dengan gradasi warna sekolah */
+      background: linear-gradient(135deg, #005c97, #363795);
+      padding: 30px;
+      color: white;
+      text-align: center;
+      border-radius: 0 0 30px 30px;
+    }
+
+    .user-stats {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+
+    .stat-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+      backdrop-filter: blur(5px);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      padding: 25px;
+    }
+
+    .menu-card {
+      /* Hapus imgur, ganti desain card bersih */
+      background: #f8f9fa;
+      border: 2px solid #e9ecef;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .menu-card:hover {
+      background: #fff;
+      border-color: #363795;
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
+    .menu-card .icon { font-size: 40px; margin-bottom: 10px; display: block; }
+    .menu-card h3 { color: #333; font-size: 18px; }
+
+    /* --- QUIZ & GAMEPLAY --- */
+    .quiz-screen { padding: 25px; }
+    
+    .progress-container {
+      height: 10px;
+      background: #eee;
+      border-radius: 10px;
+      margin: 20px 0;
+      overflow: hidden;
+    }
+    
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #11998e, #38ef7d);
+      width: 0%;
+      transition: 0.5s;
+    }
+
+    .question-card {
+      background: linear-gradient(135deg, #fff, #f4f4f4);
+      padding: 25px;
+      border-radius: 15px;
+      border-left: 5px solid #1a2a6c;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+
+    .question-text { font-size: 20px; font-weight: 600; color: #2c3e50; }
+
+    .answers-grid { display: grid; gap: 10px; }
+    
+    .answer-btn {
+      width: 100%;
+      padding: 15px;
+      text-align: left;
+      background: white;
+      border: 2px solid #eee;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 16px;
+    }
+
+    .answer-btn:hover:not(:disabled) {
+      border-color: #363795;
+      background: #f0f4ff;
+    }
+
+    .answer-btn.correct { background: #d4edda; border-color: #28a745; color: #155724; }
+    .answer-btn.wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+
+    /* --- RESULT & LEVEL --- */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 15px;
+      padding: 20px;
+    }
+
+    .level-item {
+      background: #fff;
+      border: 2px solid #eee;
+      border-radius: 15px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .level-item.locked { opacity: 0.6; cursor: not-allowed; background: #eee; }
+    .level-item.completed { border-color: #28a745; background: #f0fff4; }
+    .level-item:hover:not(.locked) { transform: scale(1.05); border-color: #1a2a6c; }
+
+    /* --- UTILS --- */
+    .hidden { display: none !important; }
+    .sound-fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+      font-size: 24px;
+    }
+
+    /* Partikel animasi background */
+    .bg-particles {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.4;
+      background-image: 
+        radial-gradient(#ffffff 2px, transparent 2px),
+        radial-gradient(#ffffff 2px, transparent 2px);
+      background-size: 50px 50px;
+      background-position: 0 0, 25px 25px;
+    }
+
+    /* Responsif */
+    @media (max-width: 600px) {
+      .menu-grid { grid-template-columns: 1fr; }
+      .login-screen h1 { font-size: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-particles"></div>
+
+  <div class="container">
+    
+    <div id="screen-login" class="screen active">
+      <div class="login-screen">
+        <div class="logo-container">
+          <img src="logo.png" alt="Logo SMPN 42" onerror="this.src='https://via.placeholder.com/150/1a2a6c/FFFFFF?text=SMPN+42'">
+        </div>
+        <h1>E-Gamify SMPN 42</h1>
+        <p>Petualangan Mencari Harta Karun Pengetahuan</p>
+        
+        <form id="loginForm">
+          <div class="input-group">
+            <input type="text" id="username" placeholder="Masukkan Nama Lengkap" required autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary">MULAI PETUALANGAN ▶</button>
+        </form>
+      </div>
+    </div>
+
+    <div id="screen-menu" class="screen">
+      <div class="menu-header">
+        <h2>Halo, <span id="display-name">Siswa</span>! 👋</h2>
+        <div class="user-stats">
+          <div class="stat-badge">⭐ Skor: <span id="display-score">0</span></div>
+          <div class="stat-badge">🏆 Level: <span id="display-level">1</span></div>
+        </div>
+      </div>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="app.showScreen('map')">
+          <span class="icon">🗺️</span>
+          <h3>Peta Level</h3>
+        </div>
+        <div class="menu-card" onclick="app.showLeaderboard()">
+          <span class="icon">👑</span>
+          <h3>Peringkat</h3>
+        </div>
+        <div class="menu-card" onclick="app.showProfile()">
+          <span class="icon">👤</span>
+          <h3>Profil Saya</h3>
+        </div>
+        <div class="menu-card" onclick="location.reload()">
+          <span class="icon">🚪</span>
+          <h3>Keluar</h3>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-map" class="screen">
+      <div class="menu-header" style="background: linear-gradient(135deg, #fdbb2d, #b21f1f);">
+        <h2>Peta Petualangan 🗺️</h2>
+        <p>Pilih level untuk memulai</p>
+      </div>
+      <div class="level-grid" id="level-container">
+        </div>
+      <div style="padding: 20px; text-align: center;">
+        <button class="btn btn-secondary" onclick="app.showScreen('menu')">⬅ KEMBALI</button>
+      </div>
+    </div>
+
+    <div id="screen-quiz" class="screen">
+      <div style="padding: 20px; border-bottom: 2px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-weight: bold; color: #1a2a6c;">Level <span id="quiz-level-num">1</span></span>
+        <span style="font-weight: bold; color: #b21f1f;">Skor: <span id="quiz-score">0</span></span>
+      </div>
+      <div class="quiz-screen">
+        <div class="progress-container">
+          <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="question-card">
+          <p class="question-text" id="question-text">Loading...</p>
+        </div>
+        <div class="answers-grid" id="answers-container">
+          </div>
+      </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+      <div class="login-screen">
+        <div style="font-size: 60px; margin-bottom: 10px;" id="result-icon">🏆</div>
+        <h1 id="result-title">Level Selesai!</h1>
+        <p>Kamu mendapatkan <strong id="result-points">0</strong> Poin</p>
+        
+        <div style="margin: 30px 0;">
+          <button class="btn btn-success" id="next-level-btn" onclick="app.nextLevel()">LEVEL SELANJUTNYA ➡</button>
+          <div style="height: 10px;"></div>
+          <button class="btn btn-secondary" onclick="app.showScreen('map')">KEMBALI KE PETA</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="screen-leaderboard" class="screen">
+      <div class="menu-header" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+        <h2>Papan Peringkat 🏆</h2>
+      </div>
+      <div style="padding: 20px;" id="leaderboard-list">
+        </div>
+      <div style="text-align: center; padding-bottom: 20px;">
+        <button class="btn btn-secondary" onclick="app.showScreen('menu')">⬅ KEMBALI</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sound-fab" onclick="audioManager.toggle()">
+    <span id="sound-icon">🔊</span>
+  </div>
+
+  <audio id="bgm" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=fun-life-112188.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-correct">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3?filename=correct-6033.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-wrong">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_c6ccf3232f.mp3?filename=negative-beeps-6008.mp3" type="audio/mpeg">
+  </audio>
+  <audio id="sfx-win">
+    <source src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_12b0c7443c.mp3?filename=success-1-6297.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // --- DATABASE SOAL (CONTOH) ---
+    const questionsDB = [
+      // Level 1
+      [
+        { q: "Hasil dari 5 x 5 adalah?", a: ["10", "20", "25", "55"], c: 2 },
+        { q: "Ibu kota Indonesia yang baru berada di pulau?", a: ["Jawa", "Sumatera", "Kalimantan", "Sulawesi"], c: 2 },
+        { q: "Warna bendera Indonesia adalah?", a: ["Merah Biru", "Merah Putih", "Putih Merah", "Merah Kuning"], c: 1 },
+      ],
+      // Level 2
+      [
+        { q: "Apa bahasa Inggris dari 'Buku'?", a: ["Book", "Pen", "Bag", "Table"], c: 0 },
+        { q: "Hewan yang memiliki belalai adalah?", a: ["Singa", "Ular", "Gajah", "Jerapah"], c: 2 },
+        { q: "30 dibagi 2 sama dengan?", a: ["10", "15", "12", "14"], c: 1 },
+      ],
+      // Level 3 (Dummy untuk demo)
+      [
+        { q: "Lambang sila pertama Pancasila?", a: ["Bintang", "Rantai", "Pohon Beringin", "Padi Kapas"], c: 0 },
+        { q: "Lagu kebangsaan Indonesia?", a: ["Tanah Airku", "Indonesia Raya", "Bagimu Negeri", "Garuda Pancasila"], c: 1 },
+      ]
+    ];
+
+    // --- AUDIO MANAGER ---
+    const audioManager = {
+      enabled: true,
+      bgm: document.getElementById('bgm'),
+      
+      init() {
+        this.bgm.volume = 0.3;
+      },
+      
+      playBGM() {
+        if(this.enabled) {
+          this.bgm.play().catch(e => console.log("Menunggu interaksi user untuk play audio"));
+        }
+      },
+      
+      playSFX(id) {
+        if(this.enabled) {
+          const sfx = document.getElementById(id);
+          sfx.currentTime = 0;
+          sfx.play();
+        }
+      },
+
+      toggle() {
+        this.enabled = !this.enabled;
+        document.getElementById('sound-icon').innerText = this.enabled ? '🔊' : '🔇';
+        if(this.enabled) this.bgm.play();
+        else this.bgm.pause();
+      }
+    };
+
+    // --- APP LOGIC ---
+    const app = {
+      user: {
+        name: '',
+        score: 0,
+        level: 1,
+        unlockedLevel: 1
+      },
+      currentQuiz: {
+        levelIndex: 0,
+        questionIndex: 0,
+        scoreTemp: 0
+      },
+
+      init() {
+        // Load data if exists
+        const saved = localStorage.getItem('egamify_user');
+        if(saved) {
+          this.user = JSON.parse(saved);
+        }
+        
+        // Handle Login
+        document.getElementById('loginForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('username').value;
+          if(name) {
+            this.user.name = name;
+            this.save();
+            this.updateUI();
+            
+            // Audio dimulai SETELAH interaksi user (klik tombol)
+            audioManager.init();
+            audioManager.playBGM();
+            audioManager.playSFX('sfx-win'); // Suara 'bling' saat masuk
+            
+            this.showScreen('menu');
+          }
+        });
+      },
+
+      save() {
+        localStorage.setItem('egamify_user', JSON.stringify(this.user));
+      },
+
+      showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById('screen-' + id).classList.add('active');
+        
+        if(id === 'map') this.renderMap();
+        if(id === 'menu') this.updateUI();
+      },
+
+      updateUI() {
+        document.getElementById('display-name').innerText = this.user.name;
+        document.getElementById('display-score').innerText = this.user.score;
+        document.getElementById('display-level').innerText = this.user.unlockedLevel;
+      },
+
+      // --- MAP SYSTEM ---
+      renderMap() {
+        const container = document.getElementById('level-container');
+        container.innerHTML = '';
+        
+        // Buat 10 Level (contoh)
+        for(let i = 1; i <= 10; i++) {
+          const el = document.createElement('div');
+          el.className = `level-item ${i > this.user.unlockedLevel ? 'locked' : ''} ${i < this.user.unlockedLevel ? 'completed' : ''}`;
+          
+          let icon = '🔒';
+          let status = 'Terkunci';
+          
+          if(i < this.user.unlockedLevel) { icon = '✅'; status = 'Selesai'; }
+          else if(i === this.user.unlockedLevel) { icon = '▶'; status = 'Mulai'; }
+
+          el.innerHTML = `
+            <div style="font-size:30px; margin-bottom:5px;">${icon}</div>
+            <strong>Level ${i}</strong>
+            <div style="font-size:12px; color:#666;">${status}</div>
+          `;
+          
+          if(i <= this.user.unlockedLevel) {
+            el.onclick = () => this.startLevel(i);
+          }
+          
+          container.appendChild(el);
+        }
+      },
+
+      // --- QUIZ SYSTEM ---
+      startLevel(lvl) {
+        // Cek jika soal ada
+        if(lvl > questionsDB.length) {
+          alert("Soal untuk level ini sedang disusun!");
+          return;
+        }
+
+        this.currentQuiz = {
+          levelIndex: lvl - 1,
+          questionIndex: 0,
+          scoreTemp: 0
+        };
+        
+        document.getElementById('quiz-level-num').innerText = lvl;
+        document.getElementById('quiz-score').innerText = this.user.score;
+        this.showScreen('quiz');
+        this.renderQuestion();
+      },
+
+      renderQuestion() {
+        const qData = questionsDB[this.currentQuiz.levelIndex][this.currentQuiz.questionIndex];
+        
+        // Progress bar
+        const totalQ = questionsDB[this.currentQuiz.levelIndex].length;
+        const progress = (this.currentQuiz.questionIndex / totalQ) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        // Render Text
+        document.getElementById('question-text').innerText = qData.q;
+        
+        // Render Answers
+        const ansContainer = document.getElementById('answers-container');
+        ansContainer.innerHTML = '';
+        
+        qData.a.forEach((ans, idx) => {
+          const btn = document.createElement('button');
+          btn.className = 'answer-btn';
+          btn.innerText = ans;
+          btn.onclick = () => this.checkAnswer(idx, qData.c, btn);
+          ansContainer.appendChild(btn);
+        });
+      },
+
+      checkAnswer(selectedIdx, correctIdx, btnElement) {
+        // Disable all buttons
+        const btns = document.querySelectorAll('.answer-btn');
+        btns.forEach(b => b.disabled = true);
+
+        if(selectedIdx === correctIdx) {
+          btnElement.classList.add('correct');
+          audioManager.playSFX('sfx-correct');
+          this.currentQuiz.scoreTemp += 10;
+        } else {
+          btnElement.classList.add('wrong');
+          audioManager.playSFX('sfx-wrong');
+          btns[correctIdx].classList.add('correct'); // Show correct one
+        }
+
+        // Delay next question
+        setTimeout(() => {
+          this.currentQuiz.questionIndex++;
+          const totalQ = questionsDB[this.currentQuiz.levelIndex].length;
+          
+          if(this.currentQuiz.questionIndex < totalQ) {
+            this.renderQuestion();
+          } else {
+            this.finishLevel();
+          }
+        }, 1500);
+      },
+
+      finishLevel() {
+        this.user.score += this.currentQuiz.scoreTemp;
+        
+        // Unlock next level logic
+        const currentLvl = this.currentQuiz.levelIndex + 1;
+        if(currentLvl === this.user.unlockedLevel) {
+          this.user.unlockedLevel++;
+        }
+        
+        this.save();
+        audioManager.playSFX('sfx-win');
+        
+        // Show result
+        document.getElementById('result-points').innerText = this.currentQuiz.scoreTemp;
+        
+        // Hide next button if max level
+        if(this.user.unlockedLevel > questionsDB.length) {
+          document.getElementById('next-level-btn').style.display = 'none';
+          document.getElementById('result-title').innerText = "Game Tamat! 🎉";
+        } else {
+          document.getElementById('next-level-btn').style.display = 'inline-block';
+        }
+
+        this.showScreen('result');
+      },
+
+      nextLevel() {
+        this.startLevel(this.user.unlockedLevel);
+      },
+
+      // --- LEADERBOARD (Local Mockup) ---
+      showLeaderboard() {
+        const list = document.getElementById('leaderboard-list');
+        // Simulasi data dummy + user saat ini
+        const data = [
+          { name: "Andi (Juara 1)", score: 500 },
+          { name: "Budi", score: 450 },
+          { name: this.user.name + " (Kamu)", score: this.user.score },
+          { name: "Citra", score: 200 }
+        ];
+        
+        // Sort descending
+        data.sort((a,b) => b.score - a.score);
+
+        list.innerHTML = data.map((d, i) => `
+          <div style="display:flex; justify-content:space-between; padding:15px; background:#fff; margin-bottom:10px; border-radius:10px; border:1px solid #eee;">
+            <span>#${i+1} <strong>${d.name}</strong></span>
+            <span style="color:#1a2a6c; font-weight:bold;">${d.score} Poin</span>
+          </div>
+        `).join('');
+        
+        this.showScreen('leaderboard');
+      },
+
+      showProfile() {
+        alert(`Nama: ${this.user.name}\nTotal Skor: ${this.user.score}\nLevel Terbuka: ${this.user.unlockedLevel}`);
+      }
+    };
+
+    // Start App
+    app.init();
+  </script>
+</body>
+</html>
