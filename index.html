@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>E-Gamify: SMP Negeri 42 Bandar Lampung</title>
+    <!-- Font Keren -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Animasi -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        :root {
+            --primary: #2563eb;    /* Biru Sekolah */
+            --secondary: #3b82f6;
+            --accent: #f59e0b;     /* Emas/Kuning Gamifikasi */
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #e0e7ff;
+            color: var(--dark);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* --- CONTAINER UTAMA --- */
+        #app-container {
+            width: 100%;
+            max-width: 480px;
+            height: 100%;
+            background-color: var(--light);
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (min-width: 500px) {
+            #app-container {
+                height: 90vh;
+                max-height: 850px;
+                border-radius: 30px;
+                border: 8px solid #1e293b;
+            }
+        }
+
+        /* --- SCREENS --- */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--light);
+            display: none; /* Default hidden */
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        .screen.active {
+            display: flex;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen {
+            background: linear-gradient(135deg, var(--primary), #1d4ed8);
+            color: white;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            text-align: center;
+        }
+
+        /* Background Particle Effect (CSS Only) */
+        .bg-circles {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: 0;
+        }
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        .login-content {
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo-container {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 50%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            animation: bounceIn 1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+
+        .input-group {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 5px;
+            border-radius: 50px;
+            display: flex;
+            width: 100%;
+            margin-top: 30px;
+            border: 2px solid rgba(255,255,255,0.3);
+            transition: transform 0.3s;
+        }
+
+        .input-group:focus-within {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.3);
+        }
+
+        input[type="text"] {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            font-family: 'Fredoka', sans-serif;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .btn-start {
+            background: var(--accent);
+            color: var(--dark);
+            width: 100%;
+            padding: 18px;
+            border-radius: 50px;
+            border: none;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #d97706;
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-start:active {
+            transform: translateY(6px);
+            box-shadow: none;
+        }
+
+        /* --- DASHBOARD --- */
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 20px 25px 30px;
+            border-radius: 0 0 35px 35px;
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
+            z-index: 20;
+            position: relative;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px 5px 5px;
+            border-radius: 30px;
+        }
+
+        .avatar {
+            width: 35px; height: 35px;
+            background: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary);
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .level-badge {
+            background: var(--accent);
+            color: var(--dark);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: pulse 2s infinite;
+        }
+
+        .xp-wrapper {
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .xp-bar-bg {
+            background: rgba(0,0,0,0.2);
+            height: 12px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #fcd34d, #f59e0b);
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 10px;
+        }
+
+        .xp-text {
+            position: absolute;
+            right: 0; top: -20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* --- SCROLL AREA --- */
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* --- CARDS --- */
+        .mission-card {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(109, 40, 217, 0.3);
+        }
+
+        .mission-card::after {
+            content: '';
+            position: absolute;
+            right: -20px; bottom: -20px;
+            width: 100px; height: 100px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            color: var(--dark);
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 18px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .module-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+
+        .icon-box {
+            width: 55px; height: 55px;
+            border-radius: 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .module-info h4 { margin: 0; font-size: 1rem; color: var(--dark); }
+        .module-info p { margin: 2px 0 0; font-size: 0.8rem; color: #64748b; }
+
+        /* --- QUIZ UI --- */
+        #quiz-interface {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--light);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(100%);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        #quiz-interface.open {
+            transform: translateY(0);
+        }
+
+        .quiz-header {
+            padding: 20px;
+            background: white;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .back-btn {
+            font-size: 1.5rem; color: var(--dark);
+            background: none; border: none; cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .quiz-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 25px;
+        }
+
+        .material-box {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            line-height: 1.7;
+            font-size: 1rem;
+            color: #334155;
+        }
+        
+        .material-box h3 { color: var(--primary); margin-bottom: 10px; font-family: 'Fredoka'; }
+        .material-box strong { color: var(--dark); }
+
+        .question-box {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            border: 2px solid #cbd5e1;
+            background: white;
+            text-align: left;
+            font-size: 1rem;
+            color: var(--dark);
+            font-weight: 600;
+            transition: all 0.2s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .option-btn:active { transform: scale(0.98); }
+
+        .option-btn.correct {
+            background: #d1fae5; border-color: var(--success); color: #065f46;
+        }
+        .option-btn.correct::after {
+            content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+            position: absolute; right: 20px;
+        }
+
+        .option-btn.wrong {
+            background: #fee2e2; border-color: var(--danger); color: #991b1b;
+            animation: shake 0.5s;
+        }
+
+        /* --- BOTTOM NAV --- */
+        .bottom-nav {
+            position: absolute; bottom: 0; width: 100%;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around;
+            padding: 15px;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            z-index: 30;
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center;
+            color: #94a3b8; cursor: pointer; transition: 0.3s;
+        }
+        .nav-item.active { color: var(--primary); transform: translateY(-5px); }
+        .nav-item i { font-size: 1.4rem; margin-bottom: 5px; }
+        .nav-item span { font-size: 0.7rem; font-weight: 700; }
+
+        /* --- MODAL REWARD --- */
+        #modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        #modal-overlay.show { opacity: 1; pointer-events: all; }
+
+        .reward-card {
+            background: white; width: 85%; max-width: 320px;
+            border-radius: 30px; padding: 30px;
+            text-align: center;
+            transform: scale(0.5); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #modal-overlay.show .reward-card { transform: scale(1); }
+
+        .star-spin { font-size: 5rem; color: var(--accent); animation: spin 3s infinite linear; margin-bottom: 10px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+
+        /* --- LEADERBOARD --- */
+        .rank-item {
+            display: flex; align-items: center;
+            background: white; padding: 15px;
+            border-radius: 15px; margin-bottom: 10px;
+            border-bottom: 3px solid #f1f5f9;
+        }
+        .rank-num { font-size: 1.2rem; font-weight: 900; color: #94a3b8; width: 30px; }
+        .rank-1 { color: #eab308; } 
+        .rank-2 { color: #94a3b8; }
+        .rank-3 { color: #b45309; }
+
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <!-- === AUDIO SYSTEM (INVISIBLE) === -->
+        <!-- Tidak perlu tag audio, kita pakai JS Web Audio API -->
+
+        <!-- === LAYAR LOGIN === -->
+        <div id="login-screen" class="screen active">
+            <div class="bg-circles">
+                <div class="circle" style="width: 100px; height: 100px; left: 10%; bottom: 20%;"></div>
+                <div class="circle" style="width: 200px; height: 200px; right: -50px; top: 10%;"></div>
+                <div class="circle" style="width: 50px; height: 50px; left: 50%; top: 50%;"></div>
+            </div>
+
+            <div class="login-content">
+                <div class="logo-container animate__animated animate__bounceIn">
+                    <!-- Gunakan logo.png yang Anda upload -->
+                    <img src="logo.png" alt="Logo SMPN 42" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3413/3413535.png'">
+                </div>
+                <h1 class="animate__animated animate__fadeInDown animate__delay-1s">E-Gamify</h1>
+                <p style="opacity: 0.9; font-size: 1.1rem; margin-bottom: 10px;">SMP Negeri 42 Bandar Lampung</p>
+                <div style="font-size: 0.9rem; background: rgba(255,255,255,0.2); padding: 5px 15px; border-radius: 20px;">
+                    Edisi Kelas 9 - Wawasan Luas
+                </div>
+
+                <div class="input-group animate__animated animate__fadeInUp animate__delay-1s">
+                    <input type="text" id="username" placeholder="Siapa namamu?" autocomplete="off">
+                </div>
+
+                <button class="btn-start animate__animated animate__fadeInUp animate__delay-2s" onclick="handleLogin()">
+                    MULAI BELAJAR <i class="fas fa-rocket" style="margin-left: 10px;"></i>
+                </button>
+            </div>
+            
+            <p style="position: absolute; bottom: 20px; font-size: 0.7rem; opacity: 0.6;">© 2025 PKM-PM Tim E-Gamify</p>
+        </div>
+
+        <!-- === LAYAR UTAMA (HOME) === -->
+        <div id="home-screen" class="screen">
+            <header>
+                <div class="header-top">
+                    <div class="user-pill">
+                        <div class="avatar" id="avatar-initial">A</div>
+                        <div style="display: flex; flex-direction: column;">
+                            <span id="display-name" style="font-size: 0.9rem; font-weight: 700;">User</span>
+                            <span style="font-size: 0.7rem; opacity: 0.8;">Siswa Teladan</span>
+                        </div>
+                    </div>
+                    <div class="level-badge" id="level-display">Level 1</div>
+                </div>
+                <div class="xp-wrapper">
+                    <div class="xp-text"><span id="xp-current">0</span> / <span id="xp-max">100</span> XP</div>
+                    <div class="xp-bar-bg">
+                        <div class="xp-fill" id="xp-fill"></div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-scroll" id="main-scroll">
+                <!-- Tab: Belajar -->
+                <div id="tab-learn" class="tab-content">
+                    <div class="mission-card animate__animated animate__pulse animate__infinite animate__slower">
+                        <h3 style="font-family: 'Fredoka'">Misi Harian</h3>
+                        <p style="font-size: 0.9rem; margin-top: 5px; opacity: 0.9;">
+                            Selesaikan modul <b>"Bioteknologi"</b> untuk mendapatkan +50 Bonus XP hari ini!
+                        </p>
+                    </div>
+
+                    <div class="section-header">
+                        <div class="section-title">Peta Belajar</div>
+                        <i class="fas fa-map-marked-alt" style="color: var(--primary)"></i>
+                    </div>
+
+                    <div class="module-grid" id="module-container">
+                        <!-- Modul di-generate JS -->
+                    </div>
+                </div>
+
+                <!-- Tab: Leaderboard -->
+                <div id="tab-rank" class="tab-content" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-title">Top Siswa Kelas 9</div>
+                        <i class="fas fa-trophy" style="color: var(--accent)"></i>
+                    </div>
+                    <div id="leaderboard-container"></div>
+                </div>
+
+                <!-- Tab: Badges -->
+                <div id="tab-badges" class="tab-content" style="display: none;">
+                    <div class="section-header">
+                        <div class="section-title">Koleksi Lencana</div>
+                        <i class="fas fa-medal" style="color: var(--danger)"></i>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;" id="badge-container"></div>
+                </div>
+            </div>
+
+            <!-- Navigasi Bawah -->
+            <nav class="bottom-nav">
+                <div class="nav-item active" onclick="switchTab('learn', this)">
+                    <i class="fas fa-book-open"></i> <span>Belajar</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('rank', this)">
+                    <i class="fas fa-chart-bar"></i> <span>Peringkat</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('badges', this)">
+                    <i class="fas fa-award"></i> <span>Prestasi</span>
+                </div>
+            </nav>
+        </div>
+
+        <!-- === INTERFACE KUIS (SLIDE UP) === -->
+        <div id="quiz-interface">
+            <div class="quiz-header">
+                <button class="back-btn" onclick="closeQuiz()"><i class="fas fa-arrow-left"></i></button>
+                <h3 id="quiz-title" style="font-family: 'Fredoka'; flex: 1; text-align: center; margin-right: 30px;">Judul Kuis</h3>
+            </div>
+            <div class="quiz-body">
+                <div class="material-box animate__animated animate__fadeInUp">
+                    <div id="quiz-material">
+                        <!-- Konten Materi -->
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 20px 0; font-weight: bold; color: #94a3b8;">--- TANTANGAN KUIS ---</div>
+
+                <div class="question-box animate__animated animate__fadeInUp animate__delay-1s">
+                    <p id="quiz-question" style="font-size: 1.1rem; font-weight: bold; margin-bottom: 20px;">Pertanyaan?</p>
+                    <div id="quiz-options">
+                        <!-- Opsi Jawaban -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- === MODAL REWARD === -->
+        <div id="modal-overlay">
+            <div class="reward-card">
+                <i class="fas fa-star star-spin"></i>
+                <h2 style="font-family: 'Fredoka'; color: var(--dark); margin-bottom: 5px;">Luar Biasa!</h2>
+                <p id="reward-msg" style="color: #64748b; margin-bottom: 20px;">Jawabanmu Tepat Sekali</p>
+                <div style="background: #fef3c7; color: #d97706; padding: 10px; border-radius: 10px; font-weight: bold; font-size: 1.2rem; margin-bottom: 20px;">
+                    +<span id="reward-xp-val">50</span> XP
+                </div>
+                <button class="btn-start" style="padding: 12px; font-size: 1rem;" onclick="closeReward()">Lanjut</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- SOUND SYSTEM (Synthesizer Sederhana) ---
+        // Kita gunakan Web Audio API agar tidak perlu load file eksternal yang berat/rusak
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        const SoundFX = {
+            playTone: (freq, type, duration) => {
+                if(audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            },
+            click: () => SoundFX.playTone(600, 'sine', 0.1),
+            correct: () => {
+                SoundFX.playTone(600, 'sine', 0.1);
+                setTimeout(() => SoundFX.playTone(1200, 'sine', 0.3), 100);
+            },
+            wrong: () => {
+                SoundFX.playTone(150, 'sawtooth', 0.4);
+            },
+            levelUp: () => {
+                let speed = 100;
+                [523, 659, 783, 1046].forEach((f, i) => {
+                    setTimeout(() => SoundFX.playTone(f, 'square', 0.2), i * speed);
+                });
+            }
+        };
+
+        // --- DATABASE MATERI KELAS 9 ---
+        const gameData = [
+            {
+                id: 1,
+                title: "Bioteknologi",
+                icon: "fa-dna",
+                color: "#8b5cf6",
+                category: "IPA",
+                material: `
+                    <h3>Pemanfaatan Mikroorganisme</h3>
+                    <p>Bioteknologi konvensional memanfaatkan mikroorganisme secara langsung. Contoh populernya adalah <strong>Tempe</strong>.</p>
+                    <p>Tempe dibuat dari fermentasi kedelai menggunakan jamur <em>Rhizopus oryzae</em>. Jamur ini membentuk benang-benang hifa yang mengikat biji kedelai menjadi padat.</p>
+                `,
+                question: "Mikroorganisme apa yang berperan dalam pembuatan tempe?",
+                options: ["Lactobacillus bulgaricus", "Rhizopus oryzae", "Saccharomyces cerevisiae", "Acetobacter xylinum"],
+                answer: 1,
+                xp: 50
+            },
+            {
+                id: 2,
+                title: "Perubahan Sosial",
+                icon: "fa-users",
+                color: "#f59e0b",
+                category: "IPS",
+                material: `
+                    <h3>Perubahan Sosial Budaya</h3>
+                    <p>Perubahan sosial budaya adalah perubahan pada kehidupan masyarakat yang meliputi perubahan nilai-nilai dan tata cara kehidupan dari tradisional menjadi modern.</p>
+                    <p><strong>Evolusi</strong> adalah perubahan yang terjadi secara lambat dan dalam waktu yang lama, contohnya perubahan masyarakat berburu menjadi bertani.</p>
+                `,
+                question: "Perubahan sosial yang terjadi secara lambat dan bertahap disebut...",
+                options: ["Revolusi", "Evolusi", "Asimilasi", "Globalisasi"],
+                answer: 1,
+                xp: 40
+            },
+            {
+                id: 3,
+                title: "Listrik Dinamis",
+                icon: "fa-bolt",
+                color: "#eab308",
+                category: "Fisika",
+                material: `
+                    <h3>Hukum Ohm</h3>
+                    <p>Kuat arus listrik yang mengalir pada suatu penghantar sebanding dengan beda potensial dan berbanding terbalik dengan hambatan.</p>
+                    <p>Rumus: <strong>V = I x R</strong></p>
+                    <p>Dimana V = Tegangan (Volt), I = Arus (Ampere), R = Hambatan (Ohm).</p>
+                `,
+                question: "Jika hambatan (R) diperbesar sedangkan tegangan (V) tetap, maka arus listrik (I) akan...",
+                options: ["Makin Besar", "Makin Kecil", "Tetap", "Menjadi Nol"],
+                answer: 1,
+                xp: 60
+            },
+            {
+                id: 4,
+                title: "Bangun Ruang",
+                icon: "fa-cube",
+                color: "#3b82f6",
+                category: "Matematika",
+                material: `
+                    <h3>Bola</h3>
+                    <p>Bola adalah bangun ruang sisi lengkung yang dibentuk oleh tak hingga lingkaran dengan jari-jari yang sama.</p>
+                    <p>Rumus Luas Permukaan Bola: <strong>L = 4 x π x r²</strong></p>
+                `,
+                question: "Berapa rumus luas permukaan bola?",
+                options: ["4/3 π r³", "2 π r (r + t)", "4 π r²", "π r²"],
+                answer: 2,
+                xp: 70
+            },
+            {
+                id: 5,
+                title: "Profil SMPN 42",
+                icon: "fa-school",
+                color: "#ef4444",
+                category: "Umum",
+                material: `
+                    <h3>Mengenal Sekolah Kita</h3>
+                    <p>SMP Negeri 42 Bandar Lampung terletak di kawasan pesisir, tepatnya di <strong>Jl. Raya Pulau Pasaran</strong>.</p>
+                    <p>Sekolah ini mengedepankan teknologi dan gamifikasi (seperti aplikasi ini) untuk membuat siswa semangat belajar!</p>
+                `,
+                question: "Dimana lokasi SMP Negeri 42 Bandar Lampung?",
+                options: ["Jl. ZA Pagar Alam", "Jl. Raya Pulau Pasaran", "Jl. Kartini", "Jl. Antasari"],
+                answer: 1,
+                xp: 30
+            }
+        ];
+
+        // --- STATE GAME ---
+        let player = {
+            name: "",
+            level: 1,
+            xp: 0,
+            maxXP: 100,
+            completed: []
+        };
+        let activeQuiz = null;
+
+        // --- FUNGSI UTAMA ---
+
+        function handleLogin() {
+            SoundFX.click();
+            const input = document.getElementById('username');
+            const name = input.value.trim();
+
+            if (!name) {
+                // Animasi getar jika kosong
+                input.parentElement.classList.add('animate__animated', 'animate__shakeX');
+                setTimeout(() => input.parentElement.classList.remove('animate__animated', 'animate__shakeX'), 500);
+                return;
+            }
+
+            player.name = name;
+            
+            // Update UI
+            document.getElementById('display-name').innerText = name;
+            document.getElementById('avatar-initial').innerText = name.charAt(0).toUpperCase();
+
+            // Transisi Layar
+            const loginScreen = document.getElementById('login-screen');
+            const homeScreen = document.getElementById('home-screen');
+
+            loginScreen.classList.remove('animate__fadeInDown');
+            loginScreen.classList.add('animate__fadeOutUp');
+
+            setTimeout(() => {
+                loginScreen.style.display = 'none';
+                loginScreen.classList.remove('active');
+                
+                homeScreen.style.display = 'flex';
+                setTimeout(() => homeScreen.classList.add('active'), 50);
+                
+                initGame();
+                SoundFX.levelUp(); // Suara welcome
+            }, 500);
+        }
+
+        function initGame() {
+            renderModules();
+            renderLeaderboard();
+            renderBadges();
+        }
+
+        function renderModules() {
+            const container = document.getElementById('module-container');
+            container.innerHTML = '';
+
+            gameData.forEach(item => {
+                const isDone = player.completed.includes(item.id);
+                const status = isDone ? '<i class="fas fa-check-circle" style="color:var(--success)"></i>' : '<i class="fas fa-chevron-right" style="opacity:0.3"></i>';
+                const opacity = isDone ? '0.7' : '1';
+
+                const card = document.createElement('div');
+                card.className = 'module-card';
+                card.style.opacity = opacity;
+                card.onclick = () => openQuiz(item);
+
+                card.innerHTML = `
+                    <div class="icon-box" style="background:${item.color}">
+                        <i class="fas ${item.icon}"></i>
+                    </div>
+                    <div class="module-info" style="flex:1">
+                        <h4>${item.title}</h4>
+                        <p>${item.category} • ${item.xp} XP</p>
+                    </div>
+                    <div style="font-size:1.2rem">${status}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function openQuiz(data) {
+            SoundFX.click();
+            if (player.completed.includes(data.id)) {
+                alert("Kamu sudah menyelesaikan modul ini! Hebat!");
+                return;
+            }
+
+            activeQuiz = data;
+            
+            // Isi Konten
+            document.getElementById('quiz-title').innerText = data.title;
+            document.getElementById('quiz-material').innerHTML = data.material;
+            document.getElementById('quiz-question').innerText = data.question;
+
+            const optsDiv = document.getElementById('quiz-options');
+            optsDiv.innerHTML = '';
+
+            data.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(idx, btn);
+                optsDiv.appendChild(btn);
+            });
+
+            document.getElementById('quiz-interface').classList.add('open');
+        }
+
+        function closeQuiz() {
+            SoundFX.click();
+            document.getElementById('quiz-interface').classList.remove('open');
+        }
+
+        function checkAnswer(idx, btn) {
+            // Disable all buttons
+            const allBtns = document.querySelectorAll('.option-btn');
+            allBtns.forEach(b => b.disabled = true);
+
+            if (idx === activeQuiz.answer) {
+                // BENAR
+                SoundFX.correct();
+                btn.classList.add('correct');
+                
+                setTimeout(() => {
+                    closeQuiz();
+                    showReward(activeQuiz.xp);
+                    player.completed.push(activeQuiz.id);
+                    renderModules();
+                }, 1000);
+            } else {
+                // SALAH
+                SoundFX.wrong();
+                btn.classList.add('wrong');
+                setTimeout(() => {
+                    // Reset buttons
+                    allBtns.forEach(b => {
+                        b.disabled = false;
+                        b.classList.remove('wrong');
+                    });
+                }, 1000);
+            }
+        }
+
+        function showReward(xp) {
+            const modal = document.getElementById('modal-overlay');
+            const xpText = document.getElementById('reward-xp-val');
+            
+            xpText.innerText = xp;
+            modal.classList.add('show');
+            SoundFX.levelUp();
+
+            // Add XP Logic
+            addXP(xp);
+        }
+
+        function closeReward() {
+            SoundFX.click();
+            document.getElementById('modal-overlay').classList.remove('show');
+        }
+
+        function addXP(amount) {
+            let current = player.xp;
+            let target = current + amount;
+            
+            // Animasi bar sederhana
+            const interval = setInterval(() => {
+                if (current >= target) {
+                    clearInterval(interval);
+                    player.xp = target;
+                    checkLevelUp();
+                } else {
+                    current++;
+                    updateXPBar(current);
+                }
+            }, 20);
+        }
+
+        function updateXPBar(val) {
+            const pct = (val / player.maxXP) * 100;
+            document.getElementById('xp-fill').style.width = pct + '%';
+            document.getElementById('xp-current').innerText = Math.floor(val);
+            document.getElementById('xp-max').innerText = player.maxXP;
+        }
+
+        function checkLevelUp() {
+            if (player.xp >= player.maxXP) {
+                player.level++;
+                player.xp = player.xp - player.maxXP;
+                player.maxXP = Math.floor(player.maxXP * 1.5);
+                
+                document.getElementById('level-display').innerText = "Level " + player.level;
+                updateXPBar(player.xp);
+                
+                // Efek visual level up (bisa ditambah nanti)
+                alert(`🎉 LEVEL UP! Kamu sekarang Level ${player.level}`);
+            }
+        }
+
+        // --- SISTEM TAB & NAVIGASI ---
+        function switchTab(tabName, el) {
+            SoundFX.click();
+            
+            // UI Nav
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+
+            // Show target
+            const target = document.getElementById('tab-' + tabName);
+            target.style.display = 'block';
+            target.classList.add('animate__animated', 'animate__fadeIn');
+        }
+
+        function renderLeaderboard() {
+            const box = document.getElementById('leaderboard-container');
+            const names = ["Citra Lestari", "Budi Santoso", "Dewi Putri", "Rizky Pratama", "Siti Aminah"];
+            
+            let html = '';
+            names.forEach((n, i) => {
+                let rankClass = i === 0 ? 'rank-1' : (i === 1 ? 'rank-2' : (i === 2 ? 'rank-3' : ''));
+                let icon = i < 3 ? '<i class="fas fa-crown"></i>' : '#' + (i+1);
+                
+                html += `
+                <div class="rank-item">
+                    <div class="rank-num ${rankClass}">${icon}</div>
+                    <div style="flex:1; font-weight:bold; color:#334155;">${n}</div>
+                    <div style="color:var(--accent); font-weight:bold;">${1200 - (i*150)} XP</div>
+                </div>`;
+            });
+            // Tambahkan player sendiri di bawah (simulasi)
+            html += `
+                <div class="rank-item" style="border: 2px solid var(--primary); background: #eff6ff;">
+                    <div class="rank-num">#99</div>
+                    <div style="flex:1; font-weight:bold; color:var(--primary);">KAMU</div>
+                    <div style="color:var(--accent); font-weight:bold;">${player.xp} XP</div>
+                </div>
+            `;
+            box.innerHTML = html;
+        }
+
+        function renderBadges() {
+            const box = document.getElementById('badge-container');
+            const badges = [
+                {icon: 'fa-rocket', name: 'Pemula', color: '#94a3b8'},
+                {icon: 'fa-brain', name: 'Cerdas', color: '#f59e0b'},
+                {icon: 'fa-flask', name: 'Ilmuwan', color: '#8b5cf6'},
+                {icon: 'fa-globe-asia', name: 'Explorer', color: '#10b981'},
+            ];
+
+            let html = '';
+            badges.forEach(b => {
+                html += `
+                    <div style="text-align:center; opacity: 0.5; filter: grayscale(1);">
+                        <div style="width:60px; height:60px; background:${b.color}; border-radius:50%; margin:0 auto; display:flex; align-items:center; justify-content:center; color:white; font-size:1.5rem; margin-bottom:5px;">
+                            <i class="fas ${b.icon}"></i>
+                        </div>
+                        <div style="font-size:0.7rem; font-weight:bold;">${b.name}</div>
+                    </div>
+                `;
+            });
+            box.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
